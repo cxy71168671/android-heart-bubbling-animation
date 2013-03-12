@@ -29,14 +29,6 @@ public class MainActivity extends Activity {
 				mLayout.startAnimation();
 			}
 		});
-		
-		findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				mLayout.stopAnimation();
-			}
-		});
 	}
 
 	@Override

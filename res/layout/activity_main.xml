@@ -8,13 +8,6 @@
         android:layout_height="wrap_content"
         android:text="start anim" />
 
-    <Button
-        android:id="@+id/btn1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn"
-        android:text="stop anim" />
-
     <RelativeLayout
         android:id="@+id/lay1"
         android:layout_width="fill_parent"

@@ -87,12 +87,19 @@ public class LayoutAnimation extends RelativeLayout {
 		this.mViewRefresh = (this.mCount != count);
 		this.mCount = (count < 0 ? DEFAULT_COUNT : count);
 		if (mViewRefresh) {
-			stopAnimation();
+			clearAnimations();
 			initChildrenViews();
 			startAnimation();
 		}
 	}
 
+	private void clearAnimations() {
+		for (int i=0;i<views.size();i++) {
+			View view = views.get(i);
+			view.clearAnimation();
+		}
+	}
+	
 	public void reset() {
 		this.mIsInitial = true;
 	}
@@ -103,14 +110,6 @@ public class LayoutAnimation extends RelativeLayout {
 			View view = views.get(i);
 			view.setVisibility(View.VISIBLE);
 			startAnim(i, view);
-		}
-	}
-
-	public void stopAnimation() {
-		for (int i = 0; i < views.size(); i++) {
-			View view = views.get(i);
-			view.setVisibility(View.GONE);
-			view.clearAnimation();
 		}
 	}
 	
@@ -138,7 +137,7 @@ public class LayoutAnimation extends RelativeLayout {
 
 	private Animation getAnimSet(int index, final View view) {
 		float degrees;
-		if (index < 4) {
+		if (index < 4 && index < views.size() - 1) {
 			degrees = randomDegrees((index % 2 == 0));
 		} else {
 			degrees = randomDegrees();
