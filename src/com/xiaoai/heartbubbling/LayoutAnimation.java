@@ -83,6 +83,7 @@ public class LayoutAnimation extends RelativeLayout {
 	}
 
 	public void startAnimation() {
+		reset();
 		for (int i = 0; i < views.size(); i++) {
 			View view = views.get(i);
 			view.setVisibility(View.VISIBLE);
@@ -123,7 +124,9 @@ public class LayoutAnimation extends RelativeLayout {
 		Random random = new Random();
 		int startOffset = 0;
 		if (mIsInitial) {
-			startOffset = random.nextInt(300) + index * 400;
+			if (index > 0) {
+				startOffset = random.nextInt(300) + index * 300;
+			}
 			if (index == views.size() - 1) {
 				mIsInitial = false;
 			}
