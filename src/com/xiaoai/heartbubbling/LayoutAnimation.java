@@ -25,7 +25,7 @@ public class LayoutAnimation extends RelativeLayout {
 			R.drawable.icon2, R.drawable.icon3, R.drawable.icon4,
 			R.drawable.icon5, R.drawable.icon6 };
 
-	private static final int COUNT = 6;
+	private static final int DEFAULT_COUNT = 7;
 
 	private static final int MAX_DEGREES = 15;
 
@@ -39,6 +39,9 @@ public class LayoutAnimation extends RelativeLayout {
 	private Context mContext;
 
 	private boolean mIsInitial;
+	private boolean mViewRefresh;
+
+	private int mCount;
 
 	public LayoutAnimation(Context context) {
 		super(context);
@@ -59,12 +62,14 @@ public class LayoutAnimation extends RelativeLayout {
 	}
 
 	private void initView() {
-		addViews();
+		mCount = DEFAULT_COUNT;
+		initChildrenViews();
 	}
 
-	private void addViews() {
-		RelativeLayout layContent = (RelativeLayout) findViewById(R.id.content);
-		for (int i = 0; i < COUNT; i++) {
+	private void initChildrenViews() {
+		removeAllViews();
+		views.clear();
+		for (int i = 0; i < mCount; i++) {
 			View view = new View(mContext);
 			RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
 					40, 40);
@@ -72,9 +77,19 @@ public class LayoutAnimation extends RelativeLayout {
 			lp.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
 			view.setBackgroundResource(ICONS[i % ICONS.length]);
 			view.setLayoutParams(lp);
-			layContent.addView(view);
+			addView(view);
 			view.setVisibility(View.GONE);
 			views.add(view);
+		}
+	}
+
+	public void setCount(int count) {
+		this.mViewRefresh = (this.mCount != count);
+		this.mCount = (count < 0 ? DEFAULT_COUNT : count);
+		if (mViewRefresh) {
+			stopAnimation();
+			initChildrenViews();
+			startAnimation();
 		}
 	}
 
@@ -91,6 +106,14 @@ public class LayoutAnimation extends RelativeLayout {
 		}
 	}
 
+	public void stopAnimation() {
+		for (int i = 0; i < views.size(); i++) {
+			View view = views.get(i);
+			view.setVisibility(View.GONE);
+			view.clearAnimation();
+		}
+	}
+	
 	private void startAnim(final int index, final View view) {
 		Animation anim = getAnimSet(index, view);
 		anim.setAnimationListener(new AnimationListener() {
@@ -113,7 +136,7 @@ public class LayoutAnimation extends RelativeLayout {
 		view.startAnimation(anim);
 	}
 
-	private Animation getAnimSet(int index, final View img) {
+	private Animation getAnimSet(int index, final View view) {
 		float degrees;
 		if (index < 4) {
 			degrees = randomDegrees((index % 2 == 0));
@@ -134,9 +157,9 @@ public class LayoutAnimation extends RelativeLayout {
 		}
 
 		AnimationSet anim = new AnimationSet(false);
-		anim.addAnimation(getRotateAnim(img, degrees));
+		anim.addAnimation(getRotateAnim(degrees));
 
-		Animation sAnim = getScale(img);
+		Animation sAnim = getScale();
 		sAnim.setStartOffset(startOffset);
 		anim.addAnimation(sAnim);
 
@@ -150,11 +173,11 @@ public class LayoutAnimation extends RelativeLayout {
 
 		anim.addAnimation(aAnim);
 
-		img.startAnimation(anim);
+		view.startAnimation(anim);
 		return anim;
 	}
 
-	private Animation getScale(final View view) {
+	private Animation getScale() {
 		Animation anim = new ScaleAnimation(0f, 1.0f, 0f, 1.0f,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				1.0f);
@@ -163,7 +186,7 @@ public class LayoutAnimation extends RelativeLayout {
 		return anim;
 	}
 
-	private Animation getRotateAnim(final View img, final float degrees) {
+	private Animation getRotateAnim(final float degrees) {
 		Animation anim = new RotateAnimation(0f, degrees,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				1.0f);
